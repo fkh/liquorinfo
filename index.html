@@ -4,46 +4,129 @@
 	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	
+  <link rel="stylesheet" href="style.css" type="text/css">
+  	
 </head>
 <body>
   
-  <h2>Enter an address to gather relevant info for assessing a liquor license in Brooklyn, NY.</h2>
+  <div class="noPrint">
+  <h3>Enter an address to gather relevant info for assessing a liquor license in Brooklyn, NY.</h3>
   
   <form action="#" id="get-address">
- <input type="text" name="addressQuery" value="334 MONTGOMERY STREET">
-  <input type="submit">
+ <input type="text" name="addressQuery" id="addressQuery" value="100 PROSPECT PLACE">
+  <input type="submit" value="Search">
   </form>
 
+<hr>
+</div>
+
+<div class="results dynamic"></div>
+<div class="sources dynamic"></div>
 
 <script>
 
 $('#get-address').submit(function() {
   
   // important info to hang onto
-  var address, cartodb_id;
+  var address, cartodb_id, the_geom;
+  
+  // distances
+  var churchDist, liquorDist;
   
   // construct our string to lookup
   var addressQuery = $("input").val();
-  var addressBase = "https://pluto.cartodb.com/api/v2/sql?q=SELECT address, cartodb_id FROM bk_mappluto_13v1 where address = ";
+  var addressBase = "https://pluto.cartodb.com/api/v2/sql?q=SELECT address, cartodb_id, the_geom FROM bk_mappluto_13v1 where address = ";
   var addressString = addressBase + "'" + addressQuery + "';" ;
   
   //console.log(addressString);
+  
+  $(".dynamic").empty();
+  
+  console.log("Searching for " + addressQuery);
   
   $.getJSON(addressString, function(data) {
     
     if (data.rows.length > 0) {
       address = data.rows[0].address;
       cartodb_id = data.rows[0].cartodb_id;
+      the_geom = data.rows[0].the_geom;
+      
+      console.log("Found " + addressQuery + ", looking for nearby properties");
+      
+      $( ".results" ).append( "<h2>Churches and bars near to " + addressQuery + "</h2>" );
+      
+      // query for all parcels within 100m, a very generous approximation of 200ft (building entrances, etc)
+      var allNearby = "https://pluto.cartodb.com/api/v2/sql?q=SELECT address, BldgClass from bk_mappluto_13v1  where ST_DWithin(geography(the_geom), geography('" + the_geom + "'), 100);";
+
+      // get it...
+      $.getJSON(allNearby, function(places) {
+        
+        console.log("Found " + places.rows.length + " tax parcels nearby.");
+        console.log(places);
+        
+        var churches = $(places.rows).filter(function(){
+              return this.bldgclass.charAt(0) == "M";
+          });
+          
+          if(churches.length > 0){
+            console.log(churches.length);  
+            console.log(churches);
+            
+            $( ".results" ).append( "<p><span class='number'>" + churches.length + "</span> places of worship nearby.</p>" );
+            
+            
+          } else {
+            
+            $( ".results" ).append( "<p><span class='number'>0</span> places of worship nearby.</p>" );
+            
+          }
+          
+          //do something with church locations, like print addresses
+          
+          
+        
+      });
+      
+      // now look at liquor licenses
+      
+      //query string for liquor licenses
+      
+      var liquorNearby = "https://fkh.cartodb.com/api/v2/sql?q=SELECT premises from sla where ST_DWithin(geography(the_geom), geography('" + the_geom + "'), 100);";      
+      
+      // get the liquor licenses
+      
+      $.getJSON(liquorNearby, function(licenses) {
+        
+        console.log("Found " + licenses.rows.length + " liquor licenses nearby.");
+        
+        if (licenses.rows.length > 0 ) {
+          
+          $( ".results" ).append( "<p><span class='number'>" + licenses.rows.length + "</span> establishments with liquor licenses nearby.</p>" );        
+          
+        }
+                  
+          //do something with license locations, like print addresses
+          
+          
+        
+      });
+      
+      
+      // finally, attach sources:
+      $( ".sources" ).append( "<hr><p>Data sources: Report generated from ... on ...</p>" );
+      
+            
     } else {
       console.log("Address not found.");
+      
+      $( ".results" ).append( "<p>Address not found.</p>" );
+      
     }
 
 
   });
   return false;
 });
-
-
 
 </script>
 
