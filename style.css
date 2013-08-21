@@ -40,4 +40,8 @@ li {
     {
         display:none;
     }
+    
+    .sources {
+      font-size: xx-small;
+    }
 }

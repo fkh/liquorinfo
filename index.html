@@ -11,7 +11,7 @@
   
   <div class="noPrint">
   <h3>Enter an address to gather relevant info for assessing a liquor license in Brooklyn, NY.</h3>
-  
+  <p>The Liquor License Helper produces a printable summary report for use by Brooklyn Community Boards in liquor licensing discussions. For any given address, the helper finds details of churches within ~200ft and licensed properties within ~500ft.</p>
   <form action="#" id="get-address">
  <input type="text" name="addressQuery" id="addressQuery" value="100 PROSPECT PLACE">
   <input type="submit" value="Search">
@@ -136,7 +136,18 @@ $('#get-address').submit(function() {
       
       
       // finally, attach sources:
-      $( ".sources" ).append( "<hr><p>Data sources: Report generated from ... on ...</p>" );
+      
+      var timestamp = new Date();
+      
+      sources = "<hr><p>Data sources: Report generated using PLUTO data from NYC DCP and the List of Active Licenses from NYS Liquor Authority. Generated " + timestamp + ".</p>";
+      
+      sources += "<p><strong>PLUTO</strong> version 13 v1, accessed via CartoDB at <a href='https://github.com/CartoDB/cartodb-pluto'>github.com/CartoDB/cartodb-pluto</a>. DCP's disclaimer: <em>PLUTO is being provided by the Department of City Planning (DCP) on DCP's website for informational purposes only. DCP does not warranty the completeness, accuracy, content, or fitness for any particular purpose or use of PLUTO, nor are any such warranties to be implied or inferred with respect to PLUTO as furnished on the website.</em></p>";
+      
+      sources += "<p><strong>List of Active Licenses</strong> dated 5/10/2013. Retrieved from <a href='https://data.ny.gov/Economic-Development/Liquor-Authority-Quarterly-List-of-Active-Licenses/wg8y-fzsj'>data.ny.gov</a>. State Liquor Authority disclaimer: <em>This dataset includes the active licenses in NYS and is updated quarterly. More detailed information regarding newly issued licenses can be obtained from through our Public Query section of the SLA website, www.sla.ny.gov or through the Freedom of Information Law (FOIL) process.</em></p>";
+      
+      sources += "<p>Beta, proof of concept. <a href='https://github.com/fkh/liquorinfo/issues'>Got feedback?</a> Data searching powered by CartoDB, bad Javascript by <a href='https://twitter.com/fkh'>@fkh</a>. Check out <a href='https://github.com/fkh/liquorinfo'>the source on GitHub</a>.</p>";
+      
+      $( ".sources" ).append( sources );
       
             
     } else {
