@@ -53,7 +53,7 @@ $('#get-address').submit(function() {
       
       console.log("Found " + addressQuery + ", looking for nearby properties");
       
-      $( ".results" ).append( "<h2>Churches and bars near to " + addressQuery + "</h2>" );
+      $( ".results" ).append( "<h2>Churches and bars near to " + addressQuery + "</h2><p><small>Report generated with Liquor License Helper for NYC Community Boards, fkh.github.io/liquorinfo. Use with caution, refer to source info in footer.</small></p>" );
       
       // query for all parcels within 100m, a very generous approximation of 200ft (building entrances, etc)
       var allNearby = "https://pluto.cartodb.com/api/v2/sql?q=SELECT initcap(address) as address, BldgClass, initcap(OwnerName) as ownername from bk_mappluto_13v1  where ST_DWithin(geography(the_geom), geography('" + the_geom + "'), 100);";
@@ -145,7 +145,7 @@ $('#get-address').submit(function() {
       
       sources += "<p><strong>List of Active Licenses</strong> dated 5/10/2013. Retrieved from <a href='https://data.ny.gov/Economic-Development/Liquor-Authority-Quarterly-List-of-Active-Licenses/wg8y-fzsj'>data.ny.gov</a>. State Liquor Authority disclaimer: <em>This dataset includes the active licenses in NYS and is updated quarterly. More detailed information regarding newly issued licenses can be obtained from through our Public Query section of the SLA website, www.sla.ny.gov or through the Freedom of Information Law (FOIL) process.</em></p>";
       
-      sources += "<p>Beta, proof of concept. <a href='https://github.com/fkh/liquorinfo/issues'>Got feedback?</a> Data searching powered by CartoDB, bad Javascript by <a href='https://twitter.com/fkh'>@fkh</a>. Check out <a href='https://github.com/fkh/liquorinfo'>the source on GitHub</a>.</p>";
+      sources += "<p>Alpha, proof of concept. <a href='https://github.com/fkh/liquorinfo/issues'>Got feedback?</a> Data searching powered by CartoDB, bad Javascript by <a href='https://twitter.com/fkh'>@fkh</a>. Check out <a href='https://github.com/fkh/liquorinfo'>the source on GitHub</a>.</p>";
       
       $( ".sources" ).append( sources );
       

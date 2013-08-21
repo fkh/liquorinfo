@@ -26,7 +26,8 @@ a {
 
 .number {
   font-weight: 700;
-  font-size: 300%;  
+  font-size: 300%;
+  margin-right: 10px;
 }
 
 li {
