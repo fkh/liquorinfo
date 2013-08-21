@@ -29,6 +29,11 @@ a {
   font-size: 300%;  
 }
 
+li {
+   line-height: 2em;
+   margin-left: 30px;
+}
+
 @media print 
 {
     .noPrint 

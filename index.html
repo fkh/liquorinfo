@@ -35,8 +35,8 @@ $('#get-address').submit(function() {
   
   // construct our string to lookup
   var addressQuery = $("input").val();
-  var addressBase = "https://pluto.cartodb.com/api/v2/sql?q=SELECT address, cartodb_id, the_geom FROM bk_mappluto_13v1 where address = ";
-  var addressString = addressBase + "'" + addressQuery + "';" ;
+  var addressBase = "https://pluto.cartodb.com/api/v2/sql?q=SELECT address, cartodb_id, the_geom FROM bk_mappluto_13v1 where address = upper(";
+  var addressString = addressBase + "'" + addressQuery + "');" ;
   
   //console.log(addressString);
   
@@ -56,7 +56,7 @@ $('#get-address').submit(function() {
       $( ".results" ).append( "<h2>Churches and bars near to " + addressQuery + "</h2>" );
       
       // query for all parcels within 100m, a very generous approximation of 200ft (building entrances, etc)
-      var allNearby = "https://pluto.cartodb.com/api/v2/sql?q=SELECT address, BldgClass from bk_mappluto_13v1  where ST_DWithin(geography(the_geom), geography('" + the_geom + "'), 100);";
+      var allNearby = "https://pluto.cartodb.com/api/v2/sql?q=SELECT initcap(address) as address, BldgClass, initcap(OwnerName) as ownername from bk_mappluto_13v1  where ST_DWithin(geography(the_geom), geography('" + the_geom + "'), 100);";
 
       // get it...
       $.getJSON(allNearby, function(places) {
@@ -74,6 +74,13 @@ $('#get-address').submit(function() {
             
             $( ".results" ).append( "<p><span class='number'>" + churches.length + "</span> places of worship nearby.</p>" );
             
+            $( ".results" ).append( "<ul>" );
+            
+            $.each( churches, function( index, value ){
+              $( ".results" ).append( "<li>" + value.address + " - " + value.ownername + "</li>");                
+            });
+
+            $( ".results" ).append( "</ul>" );
             
           } else {
             
@@ -91,7 +98,7 @@ $('#get-address').submit(function() {
       
       //query string for liquor licenses
       
-      var liquorNearby = "https://fkh.cartodb.com/api/v2/sql?q=SELECT premises from sla where ST_DWithin(geography(the_geom), geography('" + the_geom + "'), 100);";      
+      var liquorNearby = "https://fkh.cartodb.com/api/v2/sql?q=SELECT initcap(address) as address, initcap(premises) as premises, initcap(dba) as dba from sla where ST_DWithin(geography(the_geom), geography('" + the_geom + "'), 100);";      
       
       // get the liquor licenses
       
@@ -101,13 +108,29 @@ $('#get-address').submit(function() {
         
         if (licenses.rows.length > 0 ) {
           
+          var establishments = licenses.rows;
+          
+          console.log(establishments);
+          
           $( ".results" ).append( "<p><span class='number'>" + licenses.rows.length + "</span> establishments with liquor licenses nearby.</p>" );        
+        
+          $( ".results" ).append( "<ul>" );
+
+          $.each( establishments, function( index, value ){
+            if (value.dba == "") {
+            $( ".results" ).append( "<li>" + value.address + " - <strong>" + value.premises + "</strong></li>"); 
+            } else {
+              $( ".results" ).append( "<li>" + value.address + " - " + value.premises + " dba <strong>" + value.dba + "</strong></li>");               
+            }               
+          });
+          
+          $( ".results" ).append( "</ul>" );
+          
+        } else {
+          
+          $( ".results" ).append( "<p><span class='number'>0</span> licensed establishments nearby.</p>" );
           
         }
-                  
-          //do something with license locations, like print addresses
-          
-          
         
       });
       
