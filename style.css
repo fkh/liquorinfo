@@ -1,6 +1,5 @@
 body {
-    padding: 30px;
-    margin: 0;
+    padding: 30px;;
     height: 100%;
     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
 }
@@ -33,6 +32,10 @@ a {
 li {
    line-height: 2em;
    margin-left: 30px;
+}
+
+.sources {
+  margin-bottom: 30px;
 }
 
 @media print 

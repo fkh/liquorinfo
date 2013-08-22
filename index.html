@@ -13,7 +13,7 @@
   <h3>Enter an address to gather relevant info for assessing a liquor license in Brooklyn, NY.</h3>
   <p>The Liquor License Helper produces a printable summary report for use by Brooklyn Community Boards in liquor licensing discussions. For any given address, the helper finds details of churches within ~200ft and licensed properties within ~500ft.</p>
   <form action="#" id="get-address">
- <input type="text" name="addressQuery" id="addressQuery" value="100 PROSPECT PLACE">
+ <input type="text" name="addressQuery" id="addressQuery" value="332 ROGERS AVENUE">
   <input type="submit" value="Search">
   </form>
 
@@ -37,9 +37,7 @@ $('#get-address').submit(function() {
   var addressQuery = $("input").val();
   var addressBase = "https://pluto.cartodb.com/api/v2/sql?q=SELECT address, cartodb_id, the_geom FROM bk_mappluto_13v1 where address = upper(";
   var addressString = addressBase + "'" + addressQuery + "');" ;
-  
-  //console.log(addressString);
-  
+    
   $(".dynamic").empty();
   
   console.log("Searching for " + addressQuery);
@@ -62,15 +60,12 @@ $('#get-address').submit(function() {
       $.getJSON(allNearby, function(places) {
         
         console.log("Found " + places.rows.length + " tax parcels nearby.");
-        console.log(places);
         
         var churches = $(places.rows).filter(function(){
               return this.bldgclass.charAt(0) == "M";
           });
           
           if(churches.length > 0){
-            console.log(churches.length);  
-            console.log(churches);
             
             $( ".results" ).append( "<p><span class='number'>" + churches.length + "</span> places of worship nearby.</p>" );
             
@@ -145,7 +140,7 @@ $('#get-address').submit(function() {
       
       sources += "<p><strong>List of Active Licenses</strong> dated 5/10/2013. Retrieved from <a href='https://data.ny.gov/Economic-Development/Liquor-Authority-Quarterly-List-of-Active-Licenses/wg8y-fzsj'>data.ny.gov</a>. State Liquor Authority disclaimer: <em>This dataset includes the active licenses in NYS and is updated quarterly. More detailed information regarding newly issued licenses can be obtained from through our Public Query section of the SLA website, www.sla.ny.gov or through the Freedom of Information Law (FOIL) process.</em></p>";
       
-      sources += "<p>Alpha, proof of concept. <a href='https://github.com/fkh/liquorinfo/issues'>Got feedback?</a> Data searching powered by CartoDB, bad Javascript by <a href='https://twitter.com/fkh'>@fkh</a>. Check out <a href='https://github.com/fkh/liquorinfo'>the source on GitHub</a>.</p>";
+      sources += "<p>Alpha, proof of concept. Likely only works in Chrome. <a href='https://github.com/fkh/liquorinfo/issues'>Got feedback?</a> Data searching powered by CartoDB, bad Javascript by <a href='https://twitter.com/fkh'>@fkh</a>. Check out <a href='https://github.com/fkh/liquorinfo'>the source on GitHub</a>.</p><p>.</p>";
       
       $( ".sources" ).append( sources );
       
